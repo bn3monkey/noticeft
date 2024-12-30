@@ -50,10 +50,34 @@ static inline void deviceDirectoryAndName(const char* path, char* directory, cha
     }
 }
 
+#define DEBUG_CURLMSG 1
+class CurlDebugger
+{
+public:
+    explicit CurlDebugger(CURL* curl) {
+ #ifdef DEBUG_CURLMSG
+        file = fopen("test.txt", "wb");
+        curl_easy_setopt(curl, CURLOPT_STDERR, file);
+#endif
+    }
+    ~CurlDebugger() {
+#ifdef DEBUG_CURLMSG
+        fclose(file);
+#endif
+    }
+
+
+private:
+#ifdef DEBUG_CURLMSG
+    FILE* file{ nullptr };
+#endif
+};
+
 static inline void enableTLS(NoticeFT context)
 {
 
-    // curl_easy_setopt(context->curl, CURLOPT_VERBOSE, 1L);
+     curl_easy_setopt(context->curl, CURLOPT_VERBOSE, 1L);
+         
     // curl_version_info_data* version_info = curl_version_info(CURLVERSION_NOW);
     // printf("ssl library : %s", version_info->ssl_version);
 
@@ -86,7 +110,7 @@ static NoticeFT noticeft_loginImpl(const char* ip_address, int port, const char*
     memset(_context.id, 0, 256);
     memset(_context.password, 0, 256);
     strncpy(_context.id, id, 256);
-    strncpy(_context.password, id, 256);
+    strncpy(_context.password, password, 256);
 
     _context.useTLS = useTLS;
 
@@ -130,7 +154,7 @@ static int noticeft_sendFileImpl(NoticeFT context, const char* local_path, const
 
     {
         CURLcode res = curl_easy_perform(context->curl);
-
+        
         fclose(file);
 
         if (res != CURLE_OK)

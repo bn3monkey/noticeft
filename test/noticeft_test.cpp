@@ -67,7 +67,6 @@ TEST(NoticeFTTest, ReceiveSentfileInFTPS)
 	char* id = "test";
 	char* password = "test";
 
-
 	auto context = noticeft_login(ip, port, id, password, true);
 
 	{
