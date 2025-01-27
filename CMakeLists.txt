@@ -77,7 +77,7 @@ add_library(
 target_include_directories(noticeft PRIVATE ${NOTICEFT_INCLUDE_DIR} ${curl_SOURCE_DIR}/include)
 target_link_libraries(noticeft PRIVATE CURL::libcurl_static)
 set_target_properties(noticeft PROPERTIES PUBLIC_HEADER ${NOTICEFT_INCLUDE_FILES})
-target_compile_definitions(noticeft PRIVATE NOTICEFT_EXPORTS)
+target_compile_definitions(noticeft PUBLIC NOTICEFT_EXPORTS)
 
 if (USING_FTP)
     target_compile_definitions(noticeft PRIVATE NOTICEFT_USING_FTP)

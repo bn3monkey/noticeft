@@ -117,7 +117,6 @@ static NoticeFT noticeft_loginImpl(const char* ip_address, int port, const char*
     _context.useTLS = useTLS;
 
     printf("%s : url (%s) id (%s) tls (%s)\n", __FUNCTION__, _context.base_url, _context.id, _context.useTLS ? "enable" : "disable");
-
     return &_context;
 }
 static int noticeft_logoutImpl(NoticeFT context)
