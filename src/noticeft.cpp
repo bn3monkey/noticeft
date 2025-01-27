@@ -49,3 +49,8 @@ void noticeft_closeDirectory(NoticeFT context, NoticeFTDirectory directory)
 {
     return noticeft_closeDirectoryImpl(context, directory);
 }
+
+void noticeft_print(const char* msg)
+{
+    printf("%s", msg);
+}

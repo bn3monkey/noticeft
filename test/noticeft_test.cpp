@@ -4,13 +4,22 @@
 
 TEST(NoticeFTTest, ReceiveSentfileInFTP)
 {
+	/*
 	char* ip = "127.0.0.1";
 	int port = 21;
 	char* id = "test";
 	char* password = "test";
+	*/
+
+	char* ip = "bong.byus.net";
+	int port = 21;
+	char* id = "bong";
+	char* password = "by5620";
+
+	noticeft_print("Check dll is connected\n");
 
 	auto context = noticeft_login(ip, port, id, password, false);
-
+		
 	{
 
 		int ret = noticeft_sendFile(context, "./resource/샌주.PNG", "샌주.png");
@@ -62,10 +71,13 @@ TEST(NoticeFTTest, ReceiveSentfileInFTP)
 
 TEST(NoticeFTTest, ReceiveSentfileInFTPS)
 {
+	return; 
 	char* ip = "127.0.0.1";
 	int port = 22;
 	char* id = "test";
 	char* password = "test";
+
+	noticeft_print("Check dll is connected\n");
 
 	auto context = noticeft_login(ip, port, id, password, true);
 

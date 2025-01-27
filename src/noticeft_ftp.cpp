@@ -92,6 +92,8 @@ static inline void enableTLS(NoticeFT context)
 
 static NoticeFT noticeft_loginImpl(const char* ip_address, int port, const char* id, const char* password, bool useTLS)
 {
+
+
     curl_global_init(CURL_GLOBAL_DEFAULT);
     _context.curl = curl_easy_init();
     if (!_context.curl) return nullptr;
@@ -114,19 +116,27 @@ static NoticeFT noticeft_loginImpl(const char* ip_address, int port, const char*
 
     _context.useTLS = useTLS;
 
+    printf("%s : url (%s) id (%s) tls (%s)\n", __FUNCTION__, _context.base_url, _context.id, _context.useTLS ? "enable" : "disable");
+
     return &_context;
 }
 static int noticeft_logoutImpl(NoticeFT context)
 {
+    printf("%s : url (%s) id (%s) tls (%s)\n", __FUNCTION__, context->base_url, context->id, context->useTLS ? "enable" : "disable");
+
     if (context == nullptr) return NOTICEFT_ERR_WRONG_CONTEXT;
     curl_easy_cleanup(context->curl);
     curl_global_cleanup();
+    return NOTICEFT_ERR_SUCCESS;
 }
 
 
 
 static int noticeft_sendFileImpl(NoticeFT context, const char* local_path, const char* remote_path)
 {
+    printf("%s : url (%s) id (%s) tls (%s)\n", __FUNCTION__, context->base_url, context->id, context->useTLS ? "enable" : "disable");
+    printf("%s : local_path (%s) remote_path (%s)", __FUNCTION__, local_path, remote_path);
+
     if (context == nullptr) return NOTICEFT_ERR_WRONG_CONTEXT;
 
     char url[MAX_URL_SIZE]{ 0 };
@@ -173,6 +183,9 @@ static size_t writeToFile(void* ptr, size_t size, size_t nmemb, FILE* stream) {
 
 static int noticeft_receiveFileImpl(NoticeFT context, const char* remote_path, const char* local_path)
 {
+    printf("%s : url (%s) id (%s) tls (%s)\n", __FUNCTION__, context->base_url, context->id, context->useTLS ? "enable" : "disable");
+    printf("%s : local_path (%s) remote_path (%s)", __FUNCTION__, local_path, remote_path);
+
     if (context == nullptr) return NOTICEFT_ERR_WRONG_CONTEXT;
 
     char url[MAX_URL_SIZE]{ 0 };
@@ -210,6 +223,9 @@ static int noticeft_receiveFileImpl(NoticeFT context, const char* remote_path, c
 }
 static int noticeft_existsImpl(NoticeFT context, const char* remote_path)
 {
+    printf("%s : url (%s) id (%s) tls (%s)\n", __FUNCTION__, context->base_url, context->id, context->useTLS ? "enable" : "disable");
+    printf("%s : remote_path (%s)", __FUNCTION__, remote_path);
+
     if (context == nullptr) return NOTICEFT_ERR_WRONG_CONTEXT;
 
     char url[MAX_URL_SIZE]{ 0 };
@@ -244,6 +260,9 @@ static int noticeft_existsImpl(NoticeFT context, const char* remote_path)
 }
 static int noticeft_removeFileImpl(NoticeFT context, const char* remote_path)
 {
+    printf("%s : url (%s) id (%s) tls (%s)\n", __FUNCTION__, context->base_url, context->id, context->useTLS ? "enable" : "disable");
+    printf("%s : remote_path (%s)", __FUNCTION__, remote_path);
+
     if (context == nullptr) return NOTICEFT_ERR_WRONG_CONTEXT;
 
     char remote_directory_path[256];
@@ -285,6 +304,9 @@ static int noticeft_removeFileImpl(NoticeFT context, const char* remote_path)
 }
 static int noticeft_renameFileImpl(NoticeFT context, const char* old_remote_path, const char* new_remote_path)
 {
+    printf("%s : url (%s) id (%s) tls (%s)\n", __FUNCTION__, context->base_url, context->id, context->useTLS ? "enable" : "disable");
+    printf("%s : old_remote_path (%s) new_remote_path (%s)", __FUNCTION__, old_remote_path, new_remote_path);
+
     if (context == nullptr) return NOTICEFT_ERR_WRONG_CONTEXT;
 
     char remote_old_directory_path[256];

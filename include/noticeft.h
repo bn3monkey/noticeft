@@ -1,19 +1,26 @@
 #ifndef NOTICEFT_H
 #define NOTICEFT_H
 
-#ifdef _WIN32
-    #ifdef NOTICEFT_EXPORTS
-        // DLL을 빌드할 때: NOTICEFT_EXPORTS가 정의되어야 함.
+#if defined(_WIN32) || defined(_WIN64) // Windows
+    #if defined(NOTICEFT_STATIC)
+        #define NOTICEFT_API 
+    #elif defined(NOTICEFT_EXPORTS)
         #define NOTICEFT_API __declspec(dllexport)
     #else
-        // DLL을 사용하는 경우
         #define NOTICEFT_API __declspec(dllimport)
     #endif
     #define CDECL __cdecl
-#else
-    // 다른 플랫폼 (Linux/Unix 등)
+#elif defined(__linux__) || defined(__unix__) || defined(__ANDROID__) // Linux / Android
+    #if defined(NOTICEFT_STATIC)
+        #define NOTICEFT_API 
+    #elif defined(NOTICEFT_EXPORTS)
+        #define NOTICEFT_API __attribute__((visibility("default")))
+    #else
+        #define NOTICEFT_API
+    #endif
+#else 
     #define NOTICEFT_API
-    #define CDECL
+    #pragma warning Unknown dynamic link import/export semantics.
 #endif
 
 #ifdef __cplusplus
@@ -45,6 +52,7 @@ NOTICEFT_API NoticeFTDirectory CDECL noticeft_openDirectory(NoticeFT context, co
 NOTICEFT_API int CDECL noticeft_readDirectory(NoticeFT context, NoticeFTDirectory directory);
 NOTICEFT_API void CDECL noticeft_closeDirectory(NoticeFT context, NoticeFTDirectory directory);
 
+NOTICEFT_API void CDECL noticeft_print(const char* msg);
 
 #ifdef __cplusplus
 }
