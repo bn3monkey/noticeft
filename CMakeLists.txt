@@ -48,7 +48,6 @@ FetchContent_MakeAvailable(curl)
 
 unset(BUILD_STATIC_LIBS CACHE)
 
-
 SET(NOTICEFT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 SET(NOTICEFT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
@@ -68,23 +67,29 @@ message(STATUS "NOTICEFT_INCLUDE_FILES : ${NOTICEFT_INCLUDE_FILES}")
 
 
 add_library(
-    noticeft
+    alimftp
     SHARED
     ${NOTICEFT_SOURCE_FILES}
     ${NOTICEFT_INCLUDE_FILES}
 )
 
-target_include_directories(noticeft PRIVATE ${NOTICEFT_INCLUDE_DIR} ${curl_SOURCE_DIR}/include)
-target_link_libraries(noticeft PRIVATE CURL::libcurl_static)
-set_target_properties(noticeft PROPERTIES PUBLIC_HEADER ${NOTICEFT_INCLUDE_FILES})
-target_compile_definitions(noticeft PUBLIC NOTICEFT_EXPORTS)
+target_include_directories(alimftp PRIVATE ${NOTICEFT_INCLUDE_DIR} ${curl_SOURCE_DIR}/include)
+target_link_libraries(alimftp PRIVATE CURL::libcurl_static)
+set_target_properties(alimftp PROPERTIES PUBLIC_HEADER ${NOTICEFT_INCLUDE_FILES})
+target_compile_definitions(alimftp PUBLIC ALIMFTP_EXPORTS)
 
 if (USING_FTP)
-    target_compile_definitions(noticeft PRIVATE NOTICEFT_USING_FTP)
+    target_compile_definitions(alimftp PRIVATE ALIMFTP_USING_FTP)
 endif(USING_FTP)
 
-install(TARGETS noticeft
+install(TARGETS alimftp
     LIBRARY DESTINATION lib
+    PUBLIC_HEADER DESTINATION include)
+
+install(TARGETS alimftp
+    LIBRARY DESTINATION "E:/xHarbour/noticeft"
+    ARCHIVE DESTINATION "E:/xHarbour/noticeft"
+    RUNTIME DESTINATION "E:/xHarbour/noticeft"
     PUBLIC_HEADER DESTINATION include)
 
 if (BUILD_TESTS)
@@ -99,27 +104,27 @@ if (BUILD_TESTS)
     SET(NOTICEFT_TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test")
     file(GLOB_RECURSE NOTICEFT_TEST_SOURCES "${NOTICEFT_TEST_DIR}/*.cpp")
 
-    add_executable(noticeft_tests 
+    add_executable(alimftp_tests 
         ${NOTICEFT_TEST_SOURCES})
 
-    target_include_directories(noticeft_tests PRIVATE
+    target_include_directories(alimftp_tests PRIVATE
         ${NOTICEFT_INCLUDE_DIR}
         ${gtest_SOURCE_DIR}/include
         ${gmock_SOURCE_DIR}/include)
 
-    target_link_libraries(noticeft_tests
-        noticeft
+    target_link_libraries(alimftp_tests
+    alimftp
         gtest
         gtest_main)
 
     add_custom_command(
-        TARGET noticeft_tests POST_BUILD
+        TARGET alimftp_tests POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 "${NOTICEFT_TEST_DIR}/resource" "${CMAKE_BINARY_DIR}/resource"
         COMMENT "Copying resource folder to binary directory"
     )
 
     enable_testing()
-    add_test(NAME NoticeFTTests COMMAND noticeft_tests)
+    add_test(NAME NoticeFTTests COMMAND alimftp_tests)
 
 endif(BUILD_TESTS)

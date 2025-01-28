@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <noticeft.h>
+#include <alimftp.h>
 #include <cstdio>
 
 TEST(NoticeFTTest, ReceiveSentfileInFTP)
@@ -16,118 +16,138 @@ TEST(NoticeFTTest, ReceiveSentfileInFTP)
 	char* id = "bong";
 	char* password = "by5620";
 
-	noticeft_print("Check dll is connected\n");
+	// Encoding : EUC-KR
 
-	auto context = noticeft_login(ip, port, id, password, false);
-		
+	ftp_setCodepage(949);
+	auto context = ftp_login(ip, port, id, password, false);
+	
 	{
 
-		int ret = noticeft_sendFile(context, "./resource/샌주.PNG", "샌주.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_sendFile(context, "./resource/샌주.PNG", "샌주.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 	{
-		int ret = noticeft_exists(context, "샌주.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_TRUE);
+		int ret = ftp_exists(context, "샌주.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_TRUE);
 	}
 		mkdir("result");
 	{
-		int ret = noticeft_receiveFile(context, "샌주.png", "result/샌주.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_receiveFile(context, "샌주.png", "result/샌주.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 
 	{
-		int ret = noticeft_removeFile(context, "샌주.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_removeFile(context, "샌주.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 	{
-		int ret = noticeft_exists(context, "샌주.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_FALSE);
+		int ret = ftp_exists(context, "샌주.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_FALSE);
 	}
 
 	{
 
-		int ret = noticeft_sendFile(context, "./resource/infinity_sans.PNG", "infinity_sans.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_sendFile(context, "./resource/infinity_sans.PNG", "test/infinity_sans.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 	{
-		int ret = noticeft_renameFile(context, "infinity_sans.png", "sans.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_renameFile(context, "test/infinity_sans.png", "test/sans.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 	{
-		int ret = noticeft_exists(context, "infinity_sans.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_FALSE);
+		int ret = ftp_exists(context, "test/infinity_sans.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_FALSE);
 	}
 	{
-		int ret = noticeft_exists(context, "sans.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_TRUE);
+		int ret = ftp_exists(context, "test/sans.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_TRUE);
 	}
 	{
-		int ret = noticeft_receiveFile(context, "sans.png", "result/sans.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_receiveFile(context, "test/sans.png", "result/sans.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
+	}
+
+
+	{
+		auto directory = ftp_openDirectory(context, "test/");
+		ASSERT_NE(directory, nullptr);
+
+		auto length = ftp_numberOfFilesInDirectory(context, directory);
+		ASSERT_NE(length, 0);
+
+
+		ftp_setCodepage(65001);
+		for (int i = 0; i < length; i++)
+		{
+			const char* name = ftp_fileNameInDirectory(context, directory, i);
+			const char* date = ftp_fileDateInDirectory(context, directory, i);
+			printf("name : %s date: %s\n", name, date);
+		}
+
+		ftp_closeDirectory(context, directory);
 	}
 	
-	noticeft_logout(context);
+	ftp_logout(context);
 }
 
 TEST(NoticeFTTest, ReceiveSentfileInFTPS)
 {
 	return; 
+
 	char* ip = "127.0.0.1";
 	int port = 22;
 	char* id = "test";
 	char* password = "test";
 
-	noticeft_print("Check dll is connected\n");
-
-	auto context = noticeft_login(ip, port, id, password, true);
+	auto context = ftp_login(ip, port, id, password, true);
 
 	{
 
-		int ret = noticeft_sendFile(context, "./resource/샌주.PNG", "샌주.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_sendFile(context, "./resource/샌주.PNG", "샌주.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 	{
-		int ret = noticeft_exists(context, "샌주.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_TRUE);
+		int ret = ftp_exists(context, "샌주.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_TRUE);
 	}
 	mkdir("result");
 	{
-		int ret = noticeft_receiveFile(context, "샌주.png", "result/샌주.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_receiveFile(context, "샌주.png", "result/샌주.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 
 	{
-		int ret = noticeft_removeFile(context, "샌주.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_removeFile(context, "샌주.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 	{
-		int ret = noticeft_exists(context, "샌주.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_FALSE);
+		int ret = ftp_exists(context, "샌주.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_FALSE);
 	}
 
 	{
 
-		int ret = noticeft_sendFile(context, "./resource/infinity_sans.PNG", "infinity_sans.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_sendFile(context, "./resource/infinity_sans.PNG", "infinity_sans.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 	{
-		int ret = noticeft_renameFile(context, "infinity_sans.png", "sans.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_renameFile(context, "infinity_sans.png", "sans.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 	{
-		int ret = noticeft_exists(context, "infinity_sans.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_FALSE);
+		int ret = ftp_exists(context, "infinity_sans.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_FALSE);
 	}
 	{
-		int ret = noticeft_exists(context, "sans.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_TRUE);
+		int ret = ftp_exists(context, "sans.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_TRUE);
 	}
 	{
-		int ret = noticeft_receiveFile(context, "sans.png", "result/sans.png");
-		ASSERT_EQ(ret, NOTICEFT_ERR_SUCCESS);
+		int ret = ftp_receiveFile(context, "sans.png", "result/sans.png");
+		ASSERT_EQ(ret, ALIMFTP_ERR_SUCCESS);
 	}
 
-	noticeft_logout(context);
+	ftp_logout(context);
 }
 
 int main(int argc, char** argv)
